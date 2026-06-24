@@ -1,0 +1,16 @@
+{
+  "name": "booker-playwright-tests",
+  "version": "1.0.0",
+  "description": "Playwright E2E tests for automationintesting.online",
+  "scripts": {
+    "test": "npx playwright test",
+    "test:headed": "npx playwright test --headed",
+    "test:login": "npx playwright test login",
+    "test:booking": "npx playwright test booking",
+    "test:debug": "npx playwright test --debug",
+    "report": "npx playwright show-report test-reports"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.44.0"
+  }
+}
