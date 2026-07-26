@@ -5,7 +5,7 @@ const bookingData = {
   // ── Valid booking used in TC002 ──────────────────────────────────────────
   validBooking: {
     firstname: 'Abinaya',
-    lastname: 'M',
+    lastname: 'Muthu',
     email: 'abinaya@test.com',
     phone: '07712345678',          // must be 11+ digits for the site to accept
     totalprice: '150',

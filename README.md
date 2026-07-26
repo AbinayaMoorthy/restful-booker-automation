@@ -1,89 +1,241 @@
-# Restful Booker — Playwright Test Suite
-**Target:** https://automationintesting.online/
+# Restful Booker Automation Framework
+
+End-to-end UI and API automation framework developed using **Playwright** and **Postman/Newman** for the Restful Booker application.
+
+## Application Under Test
+
+* UI Application: https://automationintesting.online/
+* API Service: https://restful-booker.herokuapp.com/
 
 ---
 
-## Project Structure
+# Technology Stack
 
-```
-booker-tests/
-├── pages/
-│   ├── AdminLoginPage.js   — Admin login, logout, nav helpers
-│   ├── RoomsPage.js        — Admin rooms panel assertions
-│   └── BookingPage.js      — Public booking form & calendar
-├── test-data/
-│   └── bookingData.js      — All credentials and booking details
-├── tests/
-│   ├── login.test.js       — TC001, TC003, TC004
-│   └── booking.test.js     — TC002
+| Tool         | Purpose                    |
+| ------------ | -------------------------- |
+| Playwright   | UI Automation              |
+| JavaScript   | Programming Language       |
+| Postman      | API Testing                |
+| Newman       | Command Line API Execution |
+| HTML Reports | Test Reporting             |
+| Node.js      | Runtime Environment        |
+| Git & GitHub | Version Control            |
+
+---
+
+# Project Structure
+
+```text
+booker-playwright-tests/
+│
+├── pages/                     # Page Object Model classes
+│   ├── AdminLoginPage.js
+│   ├── RoomsPage.js
+│   └── BookingPage.js
+│
+├── tests/                     # Playwright test files
+│   ├── login.test.js
+│   └── booking.test.js
+│
+├── test-data/                 # Test data and credentials
+│   └── bookingData.js
+│
+├── postman/
+│   ├── restful-booker-collection.json
+│   └── reports/
+│
+├── test-results/              # Playwright raw results
+│
+├── test-reports/              # Playwright HTML reports
+│
 ├── playwright.config.js
-└── package.json
+├── package.json
+└── README.md
 ```
 
 ---
 
-## Test Cases
+# Framework Design
 
-| ID    | File             | Description                                           |
-|-------|-----------------|-------------------------------------------------------|
-| TC001 | login.test.js   | Home → Admin nav → Login → Rooms page → Logout        |
-| TC002 | booking.test.js | Navigate to /rooms → fill form → pick dates → confirm |
-| TC003 | login.test.js   | Empty credentials → login rejected                   |
-| TC004 | login.test.js   | Wrong credentials → login rejected                   |
+* Page Object Model (POM)
+* Data-driven approach
+* Separate test data management
+* UI and API automation in one repository
+* HTML reporting support
+* Modular and maintainable structure
 
 ---
 
-## Setup
+# UI Test Scenarios
+
+| Test Case ID | Description                                 |
+| ------------ | ------------------------------------------- |
+| TC001        | Verify Admin Login and Logout functionality |
+| TC002        | Verify Room Booking functionality           |
+| TC003        | Verify Login with Empty Credentials         |
+| TC004        | Verify Login with Invalid Credentials       |
+
+---
+
+# API Test Scenarios
+
+The Postman collection covers:
+
+* Health Check API
+* Get Booking IDs
+* Get Booking Details
+* Create Booking
+* Update Booking
+* Partial Update Booking
+* Delete Booking
+* Authentication Token Generation
+
+---
+
+# Installation
+
+Clone the repository:
 
 ```bash
-# 1. Install dependencies
+git clone https://github.com/AbinayaMoorthy/restful-booker-automation.git
+
+cd booker-playwright-tests
+```
+
+Install dependencies:
+
+```bash
 npm install
-
-# 2. Install Playwright browsers (first time only)
-npx playwright install chromium
 ```
 
----
-
-## Running Tests
+Install Playwright browsers:
 
 ```bash
-# Run all tests (headless by default — set headless: false in config to watch)
-npm test
-
-# Watch the browser run (headed mode)
-npm run test:headed
-
-# Run only login tests
-npm run test:login
-
-# Run only booking test
-npm run test:booking
-
-# Debug a specific test step-by-step
-npm run test:debug
-
-# Open the HTML report after a run
-npm run report
+npx playwright install
 ```
 
 ---
 
-## Why the Waits Are Here
+# Running Playwright Tests
 
-| Problem in original scripts          | Fix applied                                        |
-|--------------------------------------|----------------------------------------------------|
-| No wait after page.goto()            | `waitFor({ state: 'visible' })` on key elements    |
-| Login click not awaited              | `logoutButton.waitFor()` after clicking Login      |
-| Rooms page load not confirmed        | `waitForURL(/rooms/)` + heading `waitFor()`        |
-| Logout left on wrong page            | `usernameInput.waitFor()` confirms return to login |
-| Calendar clicks not sequenced        | `waitForTimeout(400)` between first/second click   |
-| Hard-coded locators broke on SPA     | Multiple `.or()` fallback selectors on form fields |
+Run all tests:
+
+```bash
+npx playwright test
+```
+
+Run tests in headed mode:
+
+```bash
+npx playwright test --headed
+```
+
+Run specific test file:
+
+```bash
+npx playwright test tests/login.test.js
+```
+
+Debug tests:
+
+```bash
+npx playwright test --debug
+```
 
 ---
 
-## Admin Credentials (default)
-- **Username:** admin  
-- **Password:** password  
+# Playwright Reports
 
-Change in `test-data/bookingData.js` → `validAdmin`.
+Generate report:
+
+```bash
+npx playwright show-report
+```
+
+Reports are available inside:
+
+```text
+test-reports/
+```
+
+---
+
+# Running Postman Collection
+
+Install Newman:
+
+```bash
+npm install -g newman
+```
+
+Execute collection:
+
+```bash
+newman run postman/restful-booker-collection.json
+```
+
+Generate HTML report:
+
+```bash
+newman run postman/restful-booker-collection.json \
+-r cli,html \
+--reporter-html-export postman/reports/report.html
+```
+
+---
+
+# Test Data
+
+Test data is maintained separately:
+
+```text
+test-data/bookingData.js
+```
+
+This includes:
+
+* Admin credentials
+* Booking details
+* Customer information
+
+---
+
+# Sample Credentials
+
+```text
+Username: admin
+Password: password
+```
+
+---
+
+# Reporting
+
+* Playwright HTML Reports
+* Newman HTML Reports
+* Console Execution Logs
+
+---
+
+# Future Enhancements
+
+* GitHub Actions CI/CD integration
+* Allure Reporting
+* Cross-browser execution
+* Environment configuration support
+* Data-driven API testing
+* Docker execution support
+
+---
+
+# Author
+
+Abinash
+
+QA Automation Engineer
+
+---
+
+# License
+
+This project is intended for learning and portfolio purposes.
