@@ -1,5 +1,7 @@
 const { defineConfig } = require('@playwright/test');
 
+const isCI = !!process.env.CI;
+
 module.exports = defineConfig({
   testDir: './tests',
   timeout: 60000,           // 60s per test — the site can be slow
@@ -12,7 +14,7 @@ module.exports = defineConfig({
 
   use: {
     baseURL: 'https://automationintesting.online',
-    headless: false,                // watch it run; flip to true for CI
+    headless: isCI,                // headed locally, headless on GitHub
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
     actionTimeout: 15000,           // each click/fill gets 15s

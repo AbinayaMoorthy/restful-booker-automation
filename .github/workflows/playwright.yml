@@ -1,0 +1,85 @@
+name: Automation Test Suite
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Weekly regression run — Mondays 06:00 UTC (11:30 IST)
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+jobs:
+  ui-tests:
+    name: Playwright UI Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright tests
+        run: npx playwright test
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-html-report
+          path: test-reports/
+          retention-days: 14
+
+      - name: Upload traces, screenshots and videos
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-failure-artifacts
+          path: test-results/
+          retention-days: 7
+
+  api-tests:
+    name: Postman API Tests (Newman)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Newman
+        run: npm install -g newman newman-reporter-htmlextra
+
+      - name: Run Postman collection
+        run: |
+          mkdir -p postman/reports
+          newman run postman/restful-booker-collection.json \
+            --reporters cli,htmlextra \
+            --reporter-htmlextra-export postman/reports/api-test-report.html \
+            --timeout-request 30000
+
+      - name: Upload Newman report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: newman-html-report
+          path: postman/reports/
+          retention-days: 14
