@@ -21,7 +21,7 @@ class AdminLoginPage {
   }
 
   async goto() {
-  await this.page.goto('https://automationintesting.online/admin');
+  await this.page.goto('/admin');
 
   await this.usernameInput.waitFor({
     state: 'visible',

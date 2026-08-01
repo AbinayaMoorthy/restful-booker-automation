@@ -10,10 +10,6 @@ const bookingData = {
     phone: '07712345678',          // must be 11+ digits for the site to accept
     totalprice: '150',
     depositpaid: true,
-    bookingdates: {
-      checkin: '2025-09-01',
-      checkout: '2025-09-07',
-    },
   },
 
   // ── Credentials ──────────────────────────────────────────────────────────

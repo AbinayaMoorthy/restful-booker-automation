@@ -1,5 +1,7 @@
 # Restful Booker Automation Framework
 
+![Tests](https://github.com/AbinayaMoorthy/restful-booker-automation/actions/workflows/playwright.yml/badge.svg)
+
 End-to-end UI and API automation framework developed using **Playwright** and **Postman/Newman** for the Restful Booker application.
 
 ## Application Under Test
@@ -63,6 +65,7 @@ booker-playwright-tests/
 * UI and API automation in one repository
 * HTML reporting support
 * Modular and maintainable structure
+* GitHub Actions CI — runs on every push, PR, and weekly schedule
 
 ---
 
@@ -99,7 +102,7 @@ Clone the repository:
 ```bash
 git clone https://github.com/AbinayaMoorthy/restful-booker-automation.git
 
-cd booker-playwright-tests
+cd restful-booker-automation
 ```
 
 Install dependencies:
@@ -219,7 +222,6 @@ Password: password
 
 # Future Enhancements
 
-* GitHub Actions CI/CD integration
 * Allure Reporting
 * Cross-browser execution
 * Environment configuration support
