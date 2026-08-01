@@ -8,8 +8,11 @@
     "test:login": "npx playwright test login",
     "test:booking": "npx playwright test booking",
     "test:debug": "npx playwright test --debug",
-    "report": "npx playwright show-report test-reports"
+    "report": "npx playwright show-report test-reports",
+    "test:api": "newman run postman/restful-booker-collection.json -r cli,htmlextra --reporter-htmlextra-export postman/reports/api-test-report.html",
+    "report:api": "start postman/reports/api-test-report.html"
   },
+  
   "devDependencies": {
     "@playwright/test": "^1.44.0"
   }

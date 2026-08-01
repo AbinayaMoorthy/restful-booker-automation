@@ -168,7 +168,7 @@ test-reports/
 Install Newman:
 
 ```bash
-npm install -g newman
+npm install -g newman newman-reporter-htmlextra
 ```
 
 Execute collection:
@@ -181,9 +181,16 @@ Generate HTML report:
 
 ```bash
 newman run postman/restful-booker-collection.json \
--r cli,html \
---reporter-html-export postman/reports/report.html
+-r cli,htmlextra \
+--reporter-htmlextra-export postman/reports/api-test-report.html
 ```
+
+Or, use the npm shortcuts:
+
+​```bash
+npm run test:api      # run collection + generate HTML report
+npm run report:api    # open the HTML report
+​```
 
 ---
 
