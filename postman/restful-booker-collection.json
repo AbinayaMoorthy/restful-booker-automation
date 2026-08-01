@@ -69,7 +69,7 @@
               "\r",
               "// Save first booking ID for use in later requests\r",
               "const firstId = pm.response.json()[0].bookingid;\r",
-              "pm.environment.set(\"bookingId\", firstId);\r",
+              "pm.collectionVariables.set(\"bookingId\", firstId);\r",
               "pm.test(\"Booking ID saved to environment: \" + firstId, function() {\r",
               "    pm.expect(firstId).to.be.a('number');\r",
               "});"
@@ -144,13 +144,13 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/booking/1",
+          "raw": "{{baseUrl}}/booking/{{bookingId}}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "booking",
-            "1"
+            "{{bookingId}}"
           ]
         }
       },
