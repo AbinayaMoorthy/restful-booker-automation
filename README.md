@@ -239,7 +239,7 @@ Password: password
 
 # Author
 
-Abinash
+Abinaya Moorthy
 
 QA Automation Engineer
 
