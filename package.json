@@ -1,19 +1,32 @@
 {
   "name": "booker-playwright-tests",
   "version": "1.0.0",
-  "description": "Playwright E2E tests for automationintesting.online",
+  "description": "Playwright UI + Postman/Newman API automation for the Restful Booker platform (automationintesting.online)",
+  "keywords": [
+    "playwright",
+    "postman",
+    "newman",
+    "qa",
+    "automation",
+    "api-testing",
+    "page-object-model"
+  ],
+  "author": "Abinaya Moorthy",
+  "license": "MIT",
   "scripts": {
     "test": "npx playwright test",
     "test:headed": "npx playwright test --headed",
+    "test:smoke": "npx playwright test --grep @smoke",
     "test:login": "npx playwright test login",
     "test:booking": "npx playwright test booking",
     "test:debug": "npx playwright test --debug",
     "report": "npx playwright show-report test-reports",
-    "test:api": "newman run postman/restful-booker-collection.json -r cli,htmlextra --reporter-htmlextra-export postman/reports/api-test-report.html",
-    "report:api": "start postman/reports/api-test-report.html"
+    "api:test": "newman run postman/restful-booker-collection.json --reporters cli,htmlextra --reporter-htmlextra-export postman/reports/api-test-report.html --reporter-htmlextra-title \"Restful Booker API Suite\" --timeout-request 30000",
+    "api:ci": "newman run postman/restful-booker-collection.json --reporters cli,junit --reporter-junit-export postman/reports/api-junit.xml --timeout-request 30000"
   },
-  
   "devDependencies": {
-    "@playwright/test": "^1.44.0"
+    "@playwright/test": "^1.44.0",
+    "newman": "^6.2.1",
+    "newman-reporter-htmlextra": "^1.23.1"
   }
 }

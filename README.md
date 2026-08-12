@@ -1,250 +1,273 @@
-# Restful Booker Automation Framework
+# Restful Booker — Automation Suite
 
-![Tests](https://github.com/AbinayaMoorthy/restful-booker-automation/actions/workflows/playwright.yml/badge.svg)
+[![Automation Test Suite](https://github.com/AbinayaMoorthy/restful-booker-automation/actions/workflows/playwright.yml/badge.svg)](https://github.com/AbinayaMoorthy/restful-booker-automation/actions/workflows/playwright.yml)
 
-End-to-end UI and API automation framework developed using **Playwright** and **Postman/Newman** for the Restful Booker application.
+End-to-end **UI automation (Playwright)** and **REST API automation (Postman / Newman)** for the
+Restful Booker demo platform, running in a single repository behind one GitHub Actions pipeline.
 
-## Application Under Test
-
-* UI Application: https://automationintesting.online/
-* API Service: https://restful-booker.herokuapp.com/
-
----
-
-# Technology Stack
-
-| Tool         | Purpose                    |
-| ------------ | -------------------------- |
-| Playwright   | UI Automation              |
-| JavaScript   | Programming Language       |
-| Postman      | API Testing                |
-| Newman       | Command Line API Execution |
-| HTML Reports | Test Reporting             |
-| Node.js      | Runtime Environment        |
-| Git & GitHub | Version Control            |
+| | |
+|---|---|
+| **UI tests** | 4 test cases · 2 modules · Page Object Model |
+| **API tests** | 9 requests · full CRUD + auth + negative path |
+| **UI framework** | Playwright Test (JavaScript) |
+| **API framework** | Postman collection v2.1 + Newman CLI |
+| **UI target** | `https://automationintesting.online` |
+| **API target** | `https://restful-booker.herokuapp.com` |
 
 ---
 
-# Project Structure
+## Table of contents
+
+- [Project structure](#project-structure)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Running the UI tests](#running-the-ui-tests)
+- [Running the API tests](#running-the-api-tests)
+- [Continuous integration](#continuous-integration)
+- [Test coverage](#test-coverage)
+- [Design decisions](#design-decisions)
+- [Notes on the test server](#notes-on-the-test-server)
+
+---
+
+## Project structure
 
 ```text
-booker-playwright-tests/
+restful-booker-automation/
 │
-├── pages/                     # Page Object Model classes
-│   ├── AdminLoginPage.js
-│   ├── RoomsPage.js
-│   └── BookingPage.js
+├── tests/                     # Playwright specs
+│   ├── login.test.js          #   TC001, TC003, TC004  Admin authentication
+│   └── booking.test.js        #   TC002                Public booking flow
 │
-├── tests/                     # Playwright test files
-│   ├── login.test.js
-│   └── booking.test.js
+├── pages/                     # Page Object Model
+│   ├── AdminLoginPage.js      #   Admin login form + post-login navigation
+│   ├── RoomsPage.js           #   Admin rooms management
+│   └── BookingPage.js         #   Public reservation flow
 │
-├── test-data/                 # Test data and credentials
-│   └── bookingData.js
+├── test-data/
+│   └── bookingData.js         # Credentials and guest details, in one place
 │
 ├── postman/
 │   ├── restful-booker-collection.json
-│   └── reports/
+│   └── reports/               # Newman HTML output
 │
-├── test-results/              # Playwright raw results
-│
-├── test-reports/              # Playwright HTML reports
+├── .github/workflows/
+│   └── playwright.yml         # UI job + API job
 │
 ├── playwright.config.js
-├── package.json
-└── README.md
+└── package.json
 ```
 
----
-
-# Framework Design
-
-* Page Object Model (POM)
-* Data-driven approach
-* Separate test data management
-* UI and API automation in one repository
-* HTML reporting support
-* Modular and maintainable structure
-* GitHub Actions CI — runs on every push, PR, and weekly schedule
+Generated at runtime and **not committed**: `node_modules/`, `test-results/`, `test-reports/`.
 
 ---
 
-# UI Test Scenarios
+## Prerequisites
 
-| Test Case ID | Description                                 |
-| ------------ | ------------------------------------------- |
-| TC001        | Verify Admin Login and Logout functionality |
-| TC002        | Verify Room Booking functionality           |
-| TC003        | Verify Login with Empty Credentials         |
-| TC004        | Verify Login with Invalid Credentials       |
+| Tool | Version | Check |
+|---|---|---|
+| Node.js | 18 or newer | `node -v` |
+| npm | 9 or newer | `npm -v` |
 
----
-
-# API Test Scenarios
-
-The Postman collection covers:
-
-* Health Check API
-* Get Booking IDs
-* Get Booking Details
-* Create Booking
-* Update Booking
-* Partial Update Booking
-* Delete Booking
-* Authentication Token Generation
+Newman is installed locally as a dev dependency — no global install required.
 
 ---
 
-# Installation
-
-Clone the repository:
+## Installation
 
 ```bash
 git clone https://github.com/AbinayaMoorthy/restful-booker-automation.git
-
 cd restful-booker-automation
-```
 
-Install dependencies:
-
-```bash
 npm install
-```
-
-Install Playwright browsers:
-
-```bash
-npx playwright install
+npx playwright install --with-deps chromium
 ```
 
 ---
 
-# Running Playwright Tests
-
-Run all tests:
+## Running the UI tests
 
 ```bash
-npx playwright test
-```
+npm test                # full suite
+npm run test:headed     # visible browser
+npm run test:smoke      # @smoke tagged cases only
+npm run test:login      # authentication module only
+npm run test:booking    # booking module only
+npm run test:debug      # Playwright inspector
 
-Run tests in headed mode:
-
-```bash
-npx playwright test --headed
-```
-
-Run specific test file:
-
-```bash
-npx playwright test tests/login.test.js
-```
-
-Debug tests:
-
-```bash
-npx playwright test --debug
+npm run report          # open the HTML report
 ```
 
 ---
 
-# Playwright Reports
-
-Generate report:
+## Running the API tests
 
 ```bash
-npx playwright show-report
+npm run api:test        # run collection + write HTML report
+npm run api:ci          # JUnit output for CI test panels
 ```
 
-Reports are available inside:
+Open the generated report:
+
+```bash
+# Windows
+start postman\reports\api-test-report.html
+
+# macOS
+open postman/reports/api-test-report.html
+
+# Linux
+xdg-open postman/reports/api-test-report.html
+```
+
+The `htmlextra` report gives per-request assertion breakdowns, response bodies and timings.
+
+### Request order matters
+
+The collection is **stateful and must run top to bottom**. `Get Token` stores the auth cookie and
+`Create Booking` stores the booking ID, both of which later requests consume:
 
 ```text
-test-reports/
+Get Token        →  saves token       →  consumed by Update / Patch / Delete
+Create Booking   →  saves bookingId   →  consumed by Get Single / Update / Patch / Delete
+Delete Booking   →  Verify Deletion asserts the record is gone
 ```
+
+Running a single request in isolation will fail on an empty variable.
 
 ---
 
-# Running Postman Collection
+## Continuous integration
 
-Install Newman:
+`.github/workflows/playwright.yml` runs two independent jobs — Playwright UI and Newman API — on
+every push to `main`, on pull requests, weekly on a schedule, and on demand from the Actions tab.
+
+Both jobs upload their reports as build artefacts. The UI job additionally uploads traces,
+screenshots and videos on failure, so a red CI run can be diagnosed without reproducing locally:
 
 ```bash
-npm install -g newman newman-reporter-htmlextra
-```
-
-Execute collection:
-
-```bash
-newman run postman/restful-booker-collection.json
-```
-
-Generate HTML report:
-
-```bash
-newman run postman/restful-booker-collection.json \
--r cli,htmlextra \
---reporter-htmlextra-export postman/reports/api-test-report.html
-```
-
-Or, use the npm shortcuts:
-
-​```bash
-npm run test:api      # run collection + generate HTML report
-npm run report:api    # open the HTML report
-​```
-
----
-
-# Test Data
-
-Test data is maintained separately:
-
-```text
-test-data/bookingData.js
-```
-
-This includes:
-
-* Admin credentials
-* Booking details
-* Customer information
-
----
-
-# Sample Credentials
-
-```text
-Username: admin
-Password: password
+npx playwright show-trace test-results/<test-folder>/trace.zip
 ```
 
 ---
 
-# Reporting
+## Test coverage
 
-* Playwright HTML Reports
-* Newman HTML Reports
-* Console Execution Logs
+### UI — Admin authentication (`login.test.js`)
+
+| ID | Test | Type |
+|---|---|---|
+| TC001 | Home page → admin login → rooms → logout | `@smoke` |
+| TC003 | Empty credentials must not create a session | *negative* |
+| TC004 | Invalid credentials must not create a session | *negative* |
+
+### UI — Public booking (`booking.test.js`)
+
+| ID | Test | Type |
+|---|---|---|
+| TC002 | Complete a reservation end to end and assert confirmation | |
+
+### API (`postman/restful-booker-collection.json`)
+
+| # | Method | Endpoint | Purpose |
+|---|---|---|---|
+| 1 | GET | `/ping` | Health check |
+| 2 | GET | `/booking` | List all booking IDs |
+| 3 | GET | `/booking/{id}` | Retrieve a single booking |
+| 4 | POST | `/auth` | Generate auth token |
+| 5 | POST | `/booking` | Create booking — saves `bookingId` |
+| 6 | PUT | `/booking/{id}` | Full update |
+| 7 | PATCH | `/booking/{id}` | Partial update |
+| 8 | DELETE | `/booking/{id}` | Delete booking |
+| 9 | GET | `/booking/{id}` | Verify deletion returns 404 — *negative* |
+
+Assertions cover status codes, response schema, field-level data integrity after update, and
+negative-path handling.
 
 ---
 
-# Future Enhancements
+## Design decisions
 
-* Allure Reporting
-* Cross-browser execution
-* Environment configuration support
-* Data-driven API testing
-* Docker execution support
+### 1. Assertions that can actually fail
+
+An earlier revision asserted `expect(roomCount).toBeGreaterThanOrEqual(0)` on the admin rooms page.
+A count is never negative, so that assertion could not fail under any circumstance — the test
+looked green whether the page rendered or not.
+
+It is now replaced with a check on the room-management controls. A raw row count is deliberately
+*not* asserted: this is a shared public sandbox where anyone can add or delete rooms, so any fixed
+expected count would be flaky. The count is recorded as a test annotation for information, and the
+verdict rests on something that genuinely proves the page rendered.
+
+### 2. Absence of the login form is the authentication signal
+
+`isLoggedIn()` has been wrong twice, in opposite directions, and both are worth recording.
+
+It originally returned `url.includes('/admin/rooms')`. TC003 and TC004 never navigate to that
+route, so it returned `false` whether or not login succeeded — the negative tests were passing for
+the wrong reason.
+
+The obvious replacement — check that a logout button is visible — was also wrong. This application
+renders the admin navigation bar, logout control included, for unauthenticated visitors too. TC003
+and TC004 caught it immediately: both reported an active session directly after a rejected login.
+
+The reliable signal is the login form itself, which the app replaces once a session exists. Its
+*absence* distinguishes the two states; the presence of any navigation element does not. TC001 was
+corrected the same way — it now asserts the login form disappeared rather than that a logout button
+appeared.
+
+### 3. Dates are set by query parameter, not by clicking a calendar
+
+`BookingPage.openFirstReservation()` rewrites `checkin` / `checkout` on the reservation URL rather
+than driving the date picker. This skips the most fragile widget on the site and pushes the stay
+14 days out, which avoids clashing with other people's bookings on the shared sandbox.
+
+### 4. No cosmetic hard waits
+
+`page.waitForTimeout()` calls that existed only to make a run watchable have been removed. Every
+wait now targets a specific element or URL, so a timeout means something real.
+
+### 5. Locators tolerate the 2025 site redesign
+
+The public booking flow changed from an inline calendar modal to a dedicated `/reservation/{id}`
+page. Locators are anchored on `href` patterns and accessible roles with `.or()` fallbacks rather
+than on CSS classes, so a class rename does not silently match nothing.
+
+### 6. Headers are sent as headers, not as query parameters
+
+An earlier revision of the Postman collection carried `Content-Type`, `Accept` and `Cookie` as URL
+query parameters rather than as request headers. The suite still passed, because the target service
+is permissive and Postman supplies a default `Content-Type` regardless — a good example of tests
+going green while the request under test is malformed.
+
+The `Cookie` case was the serious one: it placed the session token in the URL, where in any real
+system it would be captured by server access logs, proxy logs and browser history. Auth material
+belongs in a header, never in a query string. All four affected requests now set these as headers.
 
 ---
 
-# Author
+## Notes on the test server
 
-Abinaya Moorthy
+Both targets are **public shared demo applications**. Credentials (`admin` / `password`) are
+published in the platform's own documentation and are not secrets. No real data exists on either
+service.
 
-QA Automation Engineer
+Two consequences worth stating plainly:
+
+1. The data is mutable by anyone. Tests assert on behaviour and on their own created records, never
+   on a fixed pre-existing dataset.
+2. A failing run is not automatically a test defect — the sandbox is periodically reset. CI retries
+   twice for this reason.
 
 ---
 
-# License
+## Author
 
-This project is intended for learning and portfolio purposes.
+**Abinaya Moorthy** — QA Engineer
+Manual testing · API automation · UI automation · CI/CD
+
+---
+
+## License
+
+MIT — see [LICENSE](LICENSE).

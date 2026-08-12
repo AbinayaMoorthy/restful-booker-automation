@@ -1,5 +1,21 @@
+# Dependencies
 node_modules/
+
+# Playwright artifacts (large; regenerate locally with `npm test`)
 test-results/
 test-reports/
 playwright-report/
-postman/reports/
+
+# Newman: ignore raw output, but publish the HTML report so it is
+# viewable directly from the repository
+postman/reports/*
+!postman/reports/.gitkeep
+!postman/reports/api-test-report.html
+
+# Local env / secrets
+.env
+*.local
+
+# OS noise
+.DS_Store
+Thumbs.db
