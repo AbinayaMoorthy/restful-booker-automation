@@ -19,3 +19,6 @@ postman/reports/*
 # OS noise
 .DS_Store
 Thumbs.db
+
+# Raw run output — large and regenerable via collect-runs.ps1
+metrics/raw/

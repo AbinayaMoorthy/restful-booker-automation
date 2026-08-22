@@ -259,6 +259,19 @@ Two consequences worth stating plainly:
 2. A failing run is not automatically a test defect — the sandbox is periodically reset. CI retries
    twice for this reason.
 
+## Test metrics
+
+Two scripts in the repository root instrument the suite for analysis:
+
+- `collect-runs.ps1` — runs both suites repeatedly, writing timestamped JSON
+  per run to `metrics/raw/` (gitignored; regenerable)
+- `flatten-metrics.js` — flattens the nested Playwright and Newman output into
+  CSV tables suitable for a BI tool
+
+The resulting dashboard — covering pass-rate trend, flakiness detection and
+P95 API latency across 15 consecutive runs — lives in a separate repository:
+[qa-metrics-dashboard](https://github.com/AbinayaMoorthy/qa-metrics-dashboard).
+
 ---
 
 ## Author
