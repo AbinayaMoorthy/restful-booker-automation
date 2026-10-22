@@ -54,6 +54,11 @@ restful-booker-automation/
 ├── .github/workflows/
 │   └── playwright.yml         # UI job + API job
 │
+├── metrics/
+│   └── csv/                   # Flattened run data for the QA metrics dashboard
+│
+├── collect-runs.ps1           # Runs both suites repeatedly, saves raw JSON per run
+├── flatten-metrics.js         # Flattens Playwright + Newman output into CSV tables
 ├── playwright.config.js
 └── package.json
 ```
