@@ -281,8 +281,9 @@ P95 API latency across 15 consecutive runs — lives in a separate repository:
 
 ## Author
 
-**Abinaya Moorthy** — QA Engineer
-Manual testing · API automation · UI automation · CI/CD
+**Abinaya M** — QA Automation Engineer  
+Test automation · API testing · CI/CD · QA analytics  
+[LinkedIn](https://www.linkedin.com/in/abinaya-m-8a668b202) · abinaya.work02@gmail.com
 
 ---
 
